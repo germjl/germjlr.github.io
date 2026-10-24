@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invitación especial para nuestros testigos</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 20px; min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      font-family: Georgia, serif;
+      background: linear-gradient(135deg, #f7e7e5, #fff9f0);
+      color: #59433e;
+    }
+    .tarjeta {
+      width: 100%; max-width: 520px; padding: 32px 24px;
+      text-align: center; background: #fffdf9;
+      border: 1px solid #e7c9bd; border-radius: 20px;
+      box-shadow: 0 8px 28px #79554820;
+    }
+    h1 { color: #a66b65; font-size: 30px; }
+    h2 { color: #a66b65; }
+    p { line-height: 1.7; }
+    select, button {
+      width: 100%; padding: 13px; margin-top: 12px;
+      border-radius: 9px; font-size: 16px;
+    }
+    select { border: 1px solid #d8b6aa; background: white; color: #59433e; }
+    button { border: none; background: #a66b65; color: white; cursor: pointer; }
+    button:hover { background: #87534e; }
+    button.secundario { background: #82716c; }
+    .oculto { display: none; }
+    .estado { padding: 12px; border-radius: 9px; background: #f5eee8; margin: 20px 0; font-size: 15px; }
+    .nombres { font-size: 24px; color: #a66b65; line-height: 1.6; }
+    .flor { font-size: 35px; }
+    .nota { font-size: 12px; color: #887772; margin-top: 25px; }
+    .aviso { font-size: 13px; color: #887772; }
+  </style>
+</head>
+<body>
+  <main class="tarjeta">
+    <section id="inicio">
+      <div class="flor">🌸</div>
+      <h1>Una invitación especial</h1>
+      <p>Estamos preparando uno de los días más importantes de nuestras vidas y queremos compartirlo contigo.</p>
+      <p><strong>Selecciona tu nombre para abrir tu invitación:</strong></p>
+      <select id="seleccionNombre">
+        <option value="">Selecciona tu nombre</option>
+      </select>
+      <button onclick="abrirInvitacion()">Abrir mi invitación 💌</button>
+      <p id="error" class="oculto">Por favor, selecciona tu nombre.</p>
+    </section>
+
+    <section id="invitacion" class="oculto">
+      <div class="flor">💐</div>
+      <h1>¡Queremos pedirte algo especial!</h1>
+      <p>Querido/a</p>
+      <div class="nombres" id="nombreTestigo"></div>
+      <p>Para nosotros sería un honor que formaras parte de nuestra historia y nos acompañaras como testigo en el inicio de esta nueva etapa.</p>
+      <div class="nombres">
+        <span id="nombrePareja1">Nombre de la pareja</span><br>
+        <span style="font-size:18px">y</span><br>
+        <span id="nombrePareja2">Nombre de la pareja</span>
+      </div>
+      <p>Tu presencia y apoyo significan mucho para nosotros. ¿Aceptarías acompañarnos en este momento tan especial?</p>
+      <div class="estado" id="estadoActual">Elige una respuesta para avisarnos por WhatsApp.</div>
+      <button onclick="responder('confirmado')">Sí, acepto con mucho cariño ❤️</button>
+      <button class="secundario" onclick="responder('pendiente')">Aún no puedo confirmar</button>
+      <p class="aviso">Se abrirá WhatsApp con el mensaje listo para el primer número. Después, pulsa el botón para enviarlo también al segundo número. Recuerda pulsar Enviar en cada chat.</p>
+      <button id="enviarSegundo" class="secundario oculto" onclick="enviarAlSegundoNumero()">Enviar también al segundo WhatsApp 📲</button>
+      <button class="secundario" onclick="volverInicio()">Volver al inicio</button>
+    </section>
+    <p class="nota" id="firma">Con cariño ❤️</p>
+  </main>
+
+  <script>
+    // PERSONALIZA ESTOS DATOS:
+    // Escribe los nombres de tus testigos entre comillas, separados por comas.
+    const testigos = [
+      "Reynalda Zeferino Ventura",
+
+    ];
+
+    // Número con código de país, solo dígitos; sin +, espacios ni guiones.
+    // Ejemplo de formato para México: 52 seguido de los 10 dígitos del número.
+    const numeroWhatsApp1 = "524434733339"; // Primer número: cambia las X por los dígitos
+    const numeroWhatsApp2 = "524521208848"; // Segundo número: cambia las Y por los dígitos
+
+    // Nombres de la pareja que invita.
+    const nombrePareja1 = "Roslyn Dallana G";
+    const nombrePareja2 = "Jose Luis G";
+
+    let testigoActual = "";
+    let ultimoMensaje = "";
+
+    document.getElementById("nombrePareja1").textContent = nombrePareja1;
+    document.getElementById("nombrePareja2").textContent = nombrePareja2;
+    document.getElementById("firma").textContent = `Con cariño, ${nombrePareja1} y ${nombrePareja2} ❤️`;
+
+    const selector = document.getElementById("seleccionNombre");
+    testigos.forEach((nombre, indice) => {
+      const opcion = document.createElement("option");
+      opcion.value = String(indice);
+      opcion.textContent = nombre;
+      selector.appendChild(opcion);
+    });
+
+    function abrirInvitacion() {
+      const seleccion = selector.value;
+      if (seleccion === "") {
+        document.getElementById("error").classList.remove("oculto");
+        return;
+      }
+      testigoActual = testigos[Number(seleccion)];
+      document.getElementById("error").classList.add("oculto");
+      document.getElementById("inicio").classList.add("oculto");
+      document.getElementById("invitacion").classList.remove("oculto");
+      document.getElementById("nombreTestigo").textContent = testigoActual;
+      document.getElementById("estadoActual").textContent = "Elige una respuesta para avisarnos por WhatsApp.";
+    }
+
+    function responder(respuesta) {
+      const numerosValidos = [numeroWhatsApp1, numeroWhatsApp2].every(
+        numero => /^\d{10,15}$/.test(numero) && !/[XY]/.test(numero)
+      );
+      if (!numerosValidos) {
+        alert("Configura los dos números de WhatsApp en numeroWhatsApp1 y numeroWhatsApp2 dentro del código HTML. Usa solo dígitos con código de país.");
+        return;
+      }
+
+      if (respuesta === "confirmado") {
+        ultimoMensaje = `¡Hola! Soy ${testigoActual}. Confirmo con mucho cariño que acepto ser testigo de ${nombrePareja1} y ${nombrePareja2}. ❤️`;
+        document.getElementById("estadoActual").textContent = "Se abrió WhatsApp para enviar tu aceptación al primer número.";
+      } else {
+        ultimoMensaje = `¡Hola! Soy ${testigoActual}. Por ahora aún no puedo confirmar si podré ser testigo de ${nombrePareja1} y ${nombrePareja2}. Les avisaré en cuanto pueda. 💌`;
+        document.getElementById("estadoActual").textContent = "Se abrió WhatsApp para enviar tu respuesta al primer número.";
+      }
+
+      document.getElementById("enviarSegundo").classList.remove("oculto");
+      window.open(`https://wa.me/${numeroWhatsApp1}?text=${encodeURIComponent(ultimoMensaje)}`, "_blank", "noopener,noreferrer");
+    }
+
+    function enviarAlSegundoNumero() {
+      if (!ultimoMensaje) return;
+      window.open(`https://wa.me/${numeroWhatsApp2}?text=${encodeURIComponent(ultimoMensaje)}`, "_blank", "noopener,noreferrer");
+    }
+
+    function volverInicio() {
+      document.getElementById("invitacion").classList.add("oculto");
+      document.getElementById("inicio").classList.remove("oculto");
+      selector.value = "";
+      testigoActual = "";
+    }
+  </script>
+</body>
+</html>
